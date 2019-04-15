@@ -165,6 +165,19 @@ app.get('/users/:userid/avatar', async (req, res) => { // Get image, source gamb
     }
 })
 
+app.delete('/avatar/:userid', async(req,res)=>{ //delete image only
+    try {
+        const user = await User.findOneAndUpdate(
+            {
+                _id: req.params.userid,
+            },
+            {$set:{avatar:""}}
+        );
+        res.status(200).send("avatar has been deleted")
+    } catch (e) {
+        console.log(e);
+    }
+})
 
 app.get('/users/:userid', async (req, res)=>{ //Get user by ID
     try {

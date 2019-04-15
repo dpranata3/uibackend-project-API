@@ -60,21 +60,33 @@ const userSchema = new mongoose.Schema({
     timestamps: true 
 })
 
-// userSchema.statics.findByCredentials = async (email, password) => { // Model function
-//     // mencari by email
-//     const user = await User.findOne({ email })
+userSchema.statics.findByCredentials = async (email, password) => { // Model function
+    // mencari by email
+    const user = await User.findOne({ email })
 
-//     if(!user){
-//         throw new Error("Unable to login")
-//     }
-//     // compare password
+    if(!user){
+        throw new Error("Unable to login")
+    }
+    // compare password
+    const isMatch = await bcrypt.compare(password, user.password) // true or false
 
-// }
+    if(!isMatch){
+        throw new Error("Unable to login")
+    }
 
+    return user
+
+}
+
+
+
+// Hash password before saving
 userSchema.pre('save', async function(next) {
     const user = this // akses ke user {name, age, email, password}
 
-    user.password = await bcrypt.hash(user.password, 8)
+    if(user.isModified('password')){ // apakah password  mengalami perubahan?
+        user.password = await bcrypt.hash(user.password, 8)
+    }
 
     next()
 

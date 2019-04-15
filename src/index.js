@@ -68,6 +68,26 @@ app.get('/tasks/:userid', async (req, res) => { // Get own tasks
     }
 })
 
+app.delete("/tasks", async (req, res) => { // Delete task
+    
+    try {
+      const task = await Task.findOneAndDelete({ _id: req.body.taskid });
+      const user = await User.findOne({ _id: req.body.owner });
+  
+      if (!task) {
+        return res.status(404).send("Delete failed");
+      }
+  
+      user.tasks = await user.tasks.filter(val => val != req.body.taskid);
+      user.save();
+      console.log(user.tasks);
+  
+      res.status(200).send(task);
+    } catch (e) {
+      res.status(500).send(e);
+    }
+  });
+
 app.delete("/users/:userId/delete", async (req, res) => { //Delete user & Task
     const { userId } = req.params;
   

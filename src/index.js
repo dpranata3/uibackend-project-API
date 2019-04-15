@@ -190,6 +190,35 @@ app.get('/users/:userid', async (req, res)=>{ //Get user by ID
     }
 })
 
+app.patch("/users/:userId", async (req, res) => {
+    console.log(req.body);
+  
+    const updates = Object.keys(req.body);
+    const allowedUpdates = ["name", "age"];
+    const isValidOperation = updates.every(update =>
+      allowedUpdates.includes(update)
+    );
+  
+    if (!isValidOperation) {
+      return res.status(400).send({ err: "Invalid request!" });
+    }
+  
+    try {
+      const user = await User.findOne({
+        _id: req.params.userId
+      });
+  
+      if (!user) {
+        return res.status(404).send("Update Request");
+      }
+  
+      updates.forEach(update => (user[update] = req.body[update]));
+      await user.save();
+  
+      res.send(user);
+    } catch (e) {}
+  });
+
 /**Tugas
  * Back End
  * // 1. Update Profile

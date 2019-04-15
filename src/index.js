@@ -190,7 +190,7 @@ app.get('/users/:userid', async (req, res)=>{ //Get user by ID
     }
 })
 
-app.patch("/users/:userId", async (req, res) => {
+app.patch("/users/:userId", async (req, res) => { //edit profile
     console.log(req.body);
   
     const updates = Object.keys(req.body);
